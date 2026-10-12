@@ -51,8 +51,8 @@ const { chromium } = require('playwright');
     }
 
     // 스크린샷 저장
-    await page.screenshot({ path: 'naver_map_search.png' });
-    console.log('스크린샷 저장: naver_map_search.png');
+    await page.screenshot({ path: 'naver-map-search.png' });
+    console.log('스크린샷 저장: naver-map-search.png');
 
     // 브라우저 열린 상태 유지 (5초 후 종료)
     await page.waitForTimeout(5000);

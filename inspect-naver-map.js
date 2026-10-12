@@ -52,8 +52,8 @@ const { chromium } = require('playwright');
     }
 
     // 스크린샷 저장
-    await page.screenshot({ path: 'inspect_page.png' });
-    console.log('\n스크린샷 저장: inspect_page.png');
+    await page.screenshot({ path: 'inspect-page.png' });
+    console.log('\n스크린샷 저장: inspect-page.png');
 
     // 5초 유지
     await page.waitForTimeout(5000);

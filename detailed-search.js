@@ -85,10 +85,10 @@ const { chromium } = require('playwright');
     // 스크린샷
     const timestamp = Date.now();
     await page.screenshot({
-      path: `naver_map_search_${timestamp}.png`,
+      path: `naver-map-search-${timestamp}.png`,
       fullPage: true
     });
-    console.log(`\n📸 스크린샷 저장: naver_map_search_${timestamp}.png`);
+    console.log(`\n📸 스크린샷 저장: naver-map-search-${timestamp}.png`);
 
     // 5초 대기
     await page.waitForTimeout(5000);

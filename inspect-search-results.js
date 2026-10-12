@@ -69,8 +69,8 @@ const { chromium } = require('playwright');
     console.log(JSON.stringify(koreaAIElements, null, 2));
 
     // 스크린샷 저장
-    await page.screenshot({ path: 'search_results_page.png' });
-    console.log('\n스크린샷 저장: search_results_page.png');
+    await page.screenshot({ path: 'search-results-page.png' });
+    console.log('\n스크린샷 저장: search-results-page.png');
 
     await page.waitForTimeout(5000);
 

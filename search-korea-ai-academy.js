@@ -67,14 +67,14 @@ const fs = require('fs');
 
     // 스크린샷 저장
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const screenshotPath = `korea_ai_academy_${timestamp}.png`;
+    const screenshotPath = `korea-ai-academy-${timestamp}.png`;
     await page.screenshot({ path: screenshotPath, fullPage: true });
     console.log(`\n📸 스크린샷 저장: ${screenshotPath}`);
 
     // 검색 결과 HTML 저장 (디버깅용)
     const html = await page.content();
-    fs.writeFileSync('search_page_content.html', html);
-    console.log('💾 페이지 HTML 저장: search_page_content.html');
+    fs.writeFileSync('search-page-content.html', html);
+    console.log('💾 페이지 HTML 저장: search-page-content.html');
 
     // 페이지 상태 유지
     console.log('\n⏸️  5초 후 종료...');
