@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fetch02</title>
+    <style>
+        /* 2행 5열 그리드: 열 5개를 같은 너비로 배치 (10개 이미지 → 자동으로 2행) */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            max-width: 900px;
+        }
+        /* 이미지 카드: 이미지 + 제목 */
+        .grid figure {
+            margin: 0;
+            text-align: center;
+        }
+        .grid img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 6px;
+            background: #eee; /* 이미지 로딩 전 자리 표시 */
+        }
+        .grid figcaption {
+            font-size: 12px;
+            margin-top: 4px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis; /* 긴 제목은 말줄임 처리 */
+        }
+    </style>
+</head>
+<body>
+    <h1>사진 목록 (2행 5열)</h1>
+    <!-- 이미지 그리드가 출력될 영역 -->
+    <div id="app"></div>
+
+    <script>
+        // API 주소: 전체 5000개 중 2행 x 5열 = 10개만 받도록 _limit 쿼리 사용
+        const ROWS = 2;
+        const COLS = 5;
+        const API_URL = `https://jsonplaceholder.typicode.com/photos?_limit=${ROWS * COLS}`;
+
+        // [재사용 함수 1] 범용 GET 요청 함수
+        // - url을 받아 fetch로 요청하고 JSON으로 변환해 반환
+        // - response.ok가 false(404, 500 등)이면 에러를 던져 호출부에서 처리하도록 함
+        async function fetchData(url) {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP 오류: ${response.status}`);
+            }
+            return await response.json();
+        }
+
+        // [재사용 함수 2] 사진 배열을 그리드(figure > img + figcaption)로 렌더링하는 함수
+        // - container: 출력할 부모 요소
+        // - photos: { thumbnailUrl, title } 형태의 객체 배열
+        // - loading="lazy"로 화면에 보일 때 이미지를 불러와 성능 개선
+        // - textContent / 속성 할당을 사용해 XSS(스크립트 삽입)를 방지
+        function renderPhotoGrid(container, photos) {
+            const grid = document.createElement('div');
+            grid.className = 'grid';
+            photos.forEach(photo => {
+                const figure = document.createElement('figure');
+
+                const img = document.createElement('img');
+                img.src = photo.thumbnailUrl;
+                img.alt = photo.title;
+                img.loading = 'lazy';
+
+                const caption = document.createElement('figcaption');
+                caption.textContent = photo.title;
+                caption.title = photo.title; // 마우스를 올리면 전체 제목 표시
+
+                figure.append(img, caption);
+                grid.appendChild(figure);
+            });
+            container.replaceChildren(grid); // 기존 내용을 지우고 새 그리드로 교체
+        }
+
+        // [실행 함수] 사진 목록을 가져와 화면에 출력
+        // - 로딩 메시지 표시 → 데이터 요청(await) → 2행 5열 그리드 렌더링
+        // - try/catch로 네트워크/HTTP 오류를 잡아 화면에 표시
+        async function showPhotos() {
+            const app = document.getElementById('app');
+            app.textContent = '불러오는 중...';
+            try {
+                const photos = await fetchData(API_URL);
+                renderPhotoGrid(app, photos);
+            } catch (error) {
+                app.textContent = `데이터를 불러오지 못했습니다: ${error.message}`;
+                console.error(error);
+            }
+        }
+
+        // 페이지 로드 시 실행
+        showPhotos();
+    </script>
+</body>
+</html>

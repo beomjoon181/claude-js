@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Melon Chart Top 100</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #ffffff;
+            --bg-soft: #f3f3f3;
+            --ink: #111111;
+            --ink-sub: #6b6b6b;
+            --line: #1a1a1a;
+            --accent: #e8202a;
+            --card-radius: 10px;
+            --serif: 'Cormorant Garamond', 'Times New Roman', serif;
+            --sans: 'Noto Sans KR', system-ui, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            background: var(--bg);
+            color: var(--ink);
+            font-family: var(--sans);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+        img { display: block; max-width: 100%; }
+        a { color: inherit; text-decoration: none; }
+
+        /* ---------- Hero ---------- */
+        .hero {
+            position: relative;
+            padding: 150px 0 0;
+        }
+        .hero::before {
+            /* 회색 배경이 첫 줄 카드 중간까지 깔리도록 */
+            content: '';
+            position: absolute;
+            inset: 0 0 auto 0;
+            height: 620px;
+            background: var(--bg-soft);
+            z-index: -1;
+        }
+        .wrap {
+            width: min(1300px, 100% - 32px);
+            margin: 0 auto;
+        }
+        .headline {
+            display: flex;
+            align-items: flex-end;
+            gap: 40px;
+            font-family: var(--serif);
+            font-weight: 400;
+            font-size: clamp(36px, 5vw, 64px);
+            letter-spacing: -0.01em;
+            line-height: 1;
+        }
+        .headline .bar {
+            flex: 0 1 380px;
+            height: 1px;
+            background: var(--line);
+            margin-bottom: 0.12em;
+        }
+        .headline .right {
+            margin-left: auto;
+            position: relative;
+        }
+        .headline .right::before {
+            content: '';
+            position: absolute;
+            left: -18px;
+            bottom: 0.18em;
+            width: 5px;
+            height: 5px;
+            background: var(--accent);
+        }
+        .caption {
+            margin: 40px 0 0 auto;
+            width: max-content;
+            max-width: 100%;
+            font-size: 11px;
+            line-height: 1.6;
+            color: var(--ink-sub);
+            text-align: right;
+            /* 오른쪽 타이틀 앞쪽에 맞춤 */
+            margin-right: 230px;
+        }
+        .caption strong { color: var(--ink); font-weight: 500; }
+
+        /* ---------- Grid ---------- */
+        .grid {
+            margin-top: 110px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            column-gap: clamp(20px, 8vw, 130px);
+            row-gap: 80px;
+            padding-bottom: 260px;
+        }
+        .card-slot:nth-child(4n+2) { transform: translateY(80px); }
+        .card-slot:nth-child(4n+3) { transform: translateY(160px); }
+        .card-slot:nth-child(4n+4) { transform: translateY(30px); }
+
+        .card {
+            position: relative;
+            display: block;
+            aspect-ratio: 2 / 3;
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            background: #ddd;
+            box-shadow: 0 1px 2px rgba(0,0,0,.06);
+            opacity: 0;
+            translate: 0 40px;
+            transition:
+                opacity .8s ease,
+                translate .8s cubic-bezier(.2,.7,.2,1),
+                transform .45s cubic-bezier(.2,.7,.2,1),
+                box-shadow .45s ease;
+            cursor: pointer;
+        }
+        .card.in { opacity: 1; translate: 0 0; }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 24px 40px -18px rgba(0,0,0,.45);
+        }
+        .card .blur {
+            position: absolute;
+            inset: -20%;
+            background-size: cover;
+            background-position: center;
+            filter: blur(28px) saturate(1.4);
+            transform: scale(1.1);
+        }
+        .card .shade { position: absolute; inset: 0; }
+        .card .cover {
+            position: absolute;
+            object-fit: cover;
+            transition: transform .6s cubic-bezier(.2,.7,.2,1);
+        }
+        .card:hover .cover { transform: scale(1.04); }
+
+        .card .rank {
+            position: absolute;
+            font-family: var(--serif);
+            line-height: .85;
+            letter-spacing: -0.02em;
+        }
+        .card .meta { position: absolute; left: 12px; right: 12px; }
+        .card .title {
+            font-weight: 700;
+            font-size: 15px;
+            line-height: 1.25;
+            word-break: keep-all;
+            overflow-wrap: anywhere;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .card .artist {
+            margin-top: 4px;
+            font-size: 10px;
+            opacity: .8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .card .tag {
+            position: absolute;
+            top: 10px; left: 12px; right: 12px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 8px;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            opacity: .75;
+        }
+        .card .likes {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+            padding: 5px 9px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.92);
+            color: var(--ink);
+            font-size: 10px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            opacity: 0;
+            transform: translateY(6px);
+            transition: .3s ease;
+        }
+        .card .likes::before { content: '♥'; color: var(--accent); }
+        .card:hover .likes { opacity: 1; transform: none; }
+
+        /* --- Variant A : 풀블리드 커버 + 하단 그라데이션 --- */
+        .v-a { color: #fff; }
+        .v-a .cover { inset: 0; width: 100%; height: 100%; }
+        .v-a .shade { background: linear-gradient(180deg, rgba(0,0,0,.25) 0%, transparent 30%, transparent 50%, rgba(0,0,0,.8) 100%); }
+        .v-a .rank { left: 12px; top: 26px; font-size: 54px; font-style: italic; }
+        .v-a .meta { bottom: 14px; right: 60px; }
+
+        /* --- Variant B : 블랙 포스터 + 거대 숫자 --- */
+        .v-b { background: #0d0d0d; color: #fff; }
+        .v-b .cover { width: 46%; aspect-ratio: 1; right: 12px; top: 34px; border-radius: 4px; }
+        .v-b .blur, .v-d .blur { display: none; }
+        .v-b .rank { left: 10px; bottom: 76px; font-size: 104px; }
+        .v-b .rank small { font-size: 18px; font-style: italic; margin-left: 2px; }
+        .v-b .meta { bottom: 14px; }
+        .v-b .meta::before {
+            content: ''; display: block; width: 28px; height: 1px;
+            background: var(--accent); margin-bottom: 8px;
+        }
+
+        /* --- Variant C : 블러 배경 + 중앙 커버 --- */
+        .v-c { color: #fff; }
+        .v-c .shade { background: rgba(0,0,0,.12); }
+        .v-c .cover {
+            width: 72%; aspect-ratio: 1; left: 14%; top: 22%;
+            border-radius: 6px;
+            box-shadow: 0 18px 30px -12px rgba(0,0,0,.5);
+        }
+        .v-c .rank { left: 12px; top: 28px; font-size: 30px; font-style: italic; }
+        .v-c .meta { bottom: 14px; text-align: center; text-shadow: 0 1px 8px rgba(0,0,0,.35); }
+
+        /* --- Variant D : 라이트 페이퍼 + 세리프 타이틀 --- */
+        .v-d { background: #f2f0ea; color: var(--ink); border: 1px solid #e3e0d8; }
+        .v-d .cover { width: calc(100% - 24px); left: 12px; bottom: 12px; height: 52%; border-radius: 4px; }
+        .v-d .rank { right: 12px; top: 26px; font-size: 40px; font-style: italic; color: var(--accent); }
+        .v-d .meta { top: 30px; right: 60px; }
+        .v-d .title { font-family: var(--serif); font-weight: 500; font-size: 22px; line-height: 1.05; -webkit-line-clamp: 3; line-clamp: 3; }
+
+        /* --- Variant E : 컬러 그라데이션 + 둥근 커버 --- */
+        .v-e { color: #fff; }
+        .v-e .blur { filter: blur(40px) saturate(2) brightness(1.05); }
+        .v-e .cover { width: 62%; aspect-ratio: 1; left: 19%; top: 16%; border-radius: 50%; border: 3px solid rgba(255,255,255,.7); animation: spin 18s linear infinite; animation-play-state: paused; }
+        .v-e:hover .cover { animation-play-state: running; }
+        .v-e .rank { left: 12px; bottom: 58px; font-size: 46px; }
+        .v-e .meta { bottom: 14px; }
+        @keyframes spin { to { rotate: 360deg; } }
+
+        /* 1~3위 강조 뱃지 */
+        .crown {
+            position: absolute;
+            top: 10px; right: 10px;
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            display: grid;
+            place-items: center;
+            z-index: 2;
+        }
+
+        .empty, .error {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 80px 0;
+            color: var(--ink-sub);
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        /* ---------- Floating nav ---------- */
+        .pill-nav {
+            position: fixed;
+            left: 50%;
+            bottom: 28px;
+            translate: -50% 0;
+            z-index: 50;
+            display: flex;
+            gap: 2px;
+            padding: 5px;
+            border-radius: 999px;
+            background: #111;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,.5);
+        }
+        .pill-nav button {
+            border: 0;
+            background: transparent;
+            color: #fff;
+            font: 500 12px var(--sans);
+            padding: 8px 16px;
+            border-radius: 999px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background .25s, color .25s;
+        }
+        .pill-nav button:hover { background: rgba(255,255,255,.12); }
+        .pill-nav button.active { background: #fff; color: #111; }
+
+        .to-top {
+            position: fixed;
+            right: 28px;
+            bottom: 28px;
+            z-index: 50;
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            border: 1px solid #e2e2e2;
+            background: #fff;
+            color: var(--ink);
+            font-size: 16px;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .3s, transform .3s;
+        }
+        .to-top.show { opacity: 1; pointer-events: auto; }
+        .to-top:hover { transform: translateY(-3px); }
+
+        /* ---------- Footer ---------- */
+        footer {
+            margin: 0 8px 8px;
+            padding: 44px 0 56px;
+            background: #1b1b1b;
+            color: #fff;
+            border-radius: 4px;
+        }
+        footer .wrap { position: relative; }
+        footer nav { display: flex; flex-wrap: wrap; gap: 8px 28px; font-size: 13px; }
+        footer nav a { opacity: .9; }
+        footer nav a:hover { color: var(--accent); }
+        footer .policy { margin-top: 16px; font-size: 13px; font-weight: 500; }
+        footer address {
+            margin-top: 18px;
+            font-style: normal;
+            font-size: 11px;
+            line-height: 1.8;
+            opacity: .75;
+        }
+        footer .copy { margin-top: 4px; font-size: 10px; opacity: .45; }
+        footer .mark { position: absolute; right: 0; top: 4px; display: flex; gap: 6px; align-items: center; }
+        footer .mark i { display: block; width: 12px; height: 12px; background: #fff; }
+        footer .mark i + i { background: var(--accent); transform: rotate(45deg) scale(.8); }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 960px) {
+            .grid { grid-template-columns: repeat(3, 1fr); column-gap: 40px; }
+            .card-slot:nth-child(n) { transform: none; }
+            .card-slot:nth-child(3n+2) { transform: translateY(60px); }
+            .card-slot:nth-child(3n+3) { transform: translateY(24px); }
+            .caption { margin-right: 0; }
+        }
+        @media (max-width: 640px) {
+            .hero { padding-top: 90px; }
+            .hero::before { height: 440px; }
+            .headline { gap: 16px; }
+            .headline .bar { flex-basis: 60px; }
+            .grid { grid-template-columns: repeat(2, 1fr); column-gap: 16px; row-gap: 40px; margin-top: 60px; padding-bottom: 160px; }
+            .card-slot:nth-child(n) { transform: none; }
+            .card-slot:nth-child(2n) { transform: translateY(40px); }
+            .pill-nav { bottom: 16px; }
+            .pill-nav button { padding: 7px 11px; font-size: 11px; }
+            .to-top { right: 16px; bottom: 72px; }
+            footer .mark { position: static; margin-bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="hero">
+        <div class="wrap">
+            <h1 class="headline">
+                <span>Chart</span>
+                <span class="bar" aria-hidden="true"></span>
+                <span class="right">Top 100</span>
+            </h1>
+            <p class="caption">
+                지금 가장 많이 듣는 노래,<br>
+                <strong>Melon</strong> 실시간 차트 100곡을<br>
+                한 장의 포스터 월로 만나보세요.
+            </p>
+        </div>
+
+        <main class="wrap">
+            <section class="grid" id="chart" aria-live="polite"></section>
+        </main>
+    </header>
+
+    <nav class="pill-nav" id="filters" aria-label="차트 필터">
+        <button type="button" data-filter="all" class="active">Top 100</button>
+        <button type="button" data-filter="top10">Top 10</button>
+        <button type="button" data-filter="mid">11 – 50</button>
+        <button type="button" data-filter="low">51 – 100</button>
+        <button type="button" data-filter="likes">♥ Most Liked</button>
+    </nav>
+
+    <button class="to-top" id="toTop" type="button" aria-label="맨 위로">↑</button>
+
+    <footer>
+        <div class="wrap">
+            <div class="mark" aria-hidden="true"><i></i><i></i></div>
+            <nav>
+                <a href="#">Chart</a>
+                <a href="#">Latest</a>
+                <a href="#">Genre</a>
+                <a href="#">Artist</a>
+                <a href="#">Playlist</a>
+                <a href="#">About</a>
+            </nav>
+            <p class="policy">개인정보 처리방침</p>
+            <address>
+                음악 데이터 출처: Melon 실시간 차트 (melon.json)<br>
+                본 페이지는 학습용 데모입니다.
+            </address>
+            <p class="copy">© 2026 Chart Wall. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const chartEl = document.getElementById('chart');
+        const filtersEl = document.getElementById('filters');
+        const toTopEl = document.getElementById('toTop');
+        const VARIANTS = ['v-a', 'v-b', 'v-c', 'v-d', 'v-e'];
+        let songs = [];
+
+        const escapeHtml = (str) => String(str).replace(/[&<>"']/g, (c) => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[c]));
+
+        // 120px 썸네일 URL을 500px 원본 크기로 교체
+        const bigCover = (url) => url.replace(/\/melon\/resize\/\d+.*$/, '/melon/resize/500/quality/90/optimize');
+
+        // 순위마다 같은 레이아웃이 붙도록 rank 기반으로 결정 (인접 카드가 겹치지 않게 7 곱셈)
+        const variantOf = (rank) => VARIANTS[(rank * 7 + Math.floor(rank / 5)) % VARIANTS.length];
+
+        const ordinal = (n) => {
+            if (n % 100 >= 11 && n % 100 <= 13) return 'th';
+            return { 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] || 'th';
+        };
+
+        function cardTemplate(song) {
+            const rank = Number(song.rank);
+            const title = escapeHtml(song.title);
+            const artist = escapeHtml(song.artist);
+            const cover = bigCover(song.albumCover);
+            const likes = Number(song.likes).toLocaleString('ko-KR');
+            const variant = variantOf(rank);
+            const rankLabel = variant === 'v-b'
+                ? `${rank}<small>${ordinal(rank)}</small>`
+                : String(rank).padStart(2, '0');
+
+            return `
+                <div class="card-slot">
+                    <article class="card ${variant}" title="${title} - ${artist}">
+                        <div class="blur" style="background-image:url('${cover}')"></div>
+                        <img class="cover" src="${cover}" alt="${title} 앨범 커버" loading="lazy">
+                        <div class="shade"></div>
+                        ${rank <= 3 ? `<span class="crown">${rank}</span>` : ''}
+                        <div class="tag"><span>Melon</span><span>Chart</span><span>No.${rank}</span></div>
+                        <span class="rank">${rankLabel}</span>
+                        <div class="meta">
+                            <p class="title">${title}</p>
+                            <p class="artist">${artist}</p>
+                        </div>
+                        <span class="likes">${likes}</span>
+                    </article>
+                </div>`;
+        }
+
+        // 스크롤 시 카드 등장 애니메이션
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { rootMargin: '0px 0px -8% 0px' });
+
+        function render(list) {
+            if (!list.length) {
+                chartEl.innerHTML = '<p class="empty">표시할 곡이 없습니다.</p>';
+                return;
+            }
+            chartEl.innerHTML = list.map(cardTemplate).join('');
+            chartEl.querySelectorAll('.card').forEach((card, i) => {
+                card.style.transitionDelay = `${(i % 4) * 70}ms, ${(i % 4) * 70}ms, 0ms, 0ms`;
+                observer.observe(card);
+            });
+        }
+
+        function applyFilter(type) {
+            const r = (s) => Number(s.rank);
+            const map = {
+                all: () => songs,
+                top10: () => songs.filter((s) => r(s) <= 10),
+                mid: () => songs.filter((s) => r(s) > 10 && r(s) <= 50),
+                low: () => songs.filter((s) => r(s) > 50),
+                likes: () => [...songs].sort((a, b) => Number(b.likes) - Number(a.likes)),
+            };
+            render((map[type] || map.all)());
+        }
+
+        filtersEl.addEventListener('click', (e) => {
+            const btn = e.target.closest('button[data-filter]');
+            if (!btn) return;
+            filtersEl.querySelectorAll('button').forEach((b) => b.classList.toggle('active', b === btn));
+            applyFilter(btn.dataset.filter);
+            document.getElementById('chart').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
+        window.addEventListener('scroll', () => {
+            toTopEl.classList.toggle('show', window.scrollY > 600);
+        }, { passive: true });
+        toTopEl.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        fetch('melon.json')
+            .then((res) => {
+                if (!res.ok) throw new Error(res.status);
+                return res.json();
+            })
+            .then((data) => {
+                songs = data.sort((a, b) => Number(a.rank) - Number(b.rank));
+                render(songs);
+            })
+            .catch(() => {
+                chartEl.innerHTML = `
+                    <p class="error">
+                        melon.json을 불러오지 못했습니다.<br>
+                        파일을 직접 열면(file://) 브라우저가 fetch를 막으니,
+                        VS Code <strong>Live Server</strong> 등 로컬 서버로 실행해 주세요.
+                    </p>`;
+            });
+    </script>
+</body>
+</html>

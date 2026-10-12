@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .popup-overlay.active {
+            display: flex;
+        }
+
+        .popup {
+            width: 200px;
+            height: 200px;
+            background-color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- <h1 id="claude">Hello, World!</h1>
+    <p class="name">홍길동</p> -->
+
+    <p>홍길동</p>
+    <button>이름 변경</button>
+
+    <!-- 팝업 -->
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup">
+            김길동
+        </div>
+    </div>
+</body>
+<script>
+    // const h1 = document.getElementById("claude")
+    // h1.innerText = "안녕!"
+
+    // // DOM을 이용해서 이름을 변경하기
+    // // 단, 클래스를 활용하기
+    // const p = document.getElementsByClassName("name")[0]
+    // p.innerText = "장범준"
+
+    // 이벤트
+    const button = document.querySelector("button")
+    const popupOverlay = document.getElementById("popupOverlay")
+
+    button.addEventListener("click", (e) => {
+        popupOverlay.classList.add("active")
+    })
+
+    // 팝업 바깥쪽 클릭으로 닫기
+    popupOverlay.addEventListener("click", (e) => {
+        if (e.target === popupOverlay) {
+            popupOverlay.classList.remove("active")
+        }
+    })
+
+    // ESC 키로 닫기
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            popupOverlay.classList.remove("active")
+        }
+    })
+</script>
+</html>

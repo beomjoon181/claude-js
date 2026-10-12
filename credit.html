@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>신용숲</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <link rel="stylesheet" href="css/credit.css">
+</head>
+<body>
+    <div class="container">
+        <div class="util">
+            <a href="#">로그인</a>
+            <a href="#">회원가입</a>
+        </div>
+
+        <header>
+            <div class="logo">
+                <div class="logo-mark">숲</div>
+                <span class="logo-text">신용숲</span>
+            </div>
+            <div class="gnb">
+                <span class="menu-btn">전체메뉴 <span class="burger"><span></span><span></span><span></span></span></span>
+                <button class="search-btn" id="searchBtn" aria-label="검색">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- 검색창 -->
+            <div class="search-bar" id="searchBar">
+                <input type="text" class="search-input" id="searchInput" placeholder="검색어를 입력하세요.">
+                <button class="search-close" id="searchClose">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- 전체메뉴 토글 팝업 -->
+            <div class="menu-popup" id="menuPopup">
+                <a href="#">신용점수 확인</a>
+                <a href="#">마이페이지</a>
+                <a href="#">로그인</a>
+                <a href="#">회원가입</a>
+            </div>
+        </header>
+
+        <!-- 메인 비주얼 -->
+        <section class="hero">
+            <div class="campaign-wrapper">
+                <div class="swiper campaign-swiper">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <div class="campaign">
+                                <div class="label">명의도용 예방 캠페인</div>
+                                <div class="title">금융사기,<br>지금 막아요!</div>
+                                <div class="ph">campaign illust 1</div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="campaign">
+                                <div class="label">신용점수 관리</div>
+                                <div class="title">좋은 신용은<br>자산입니다!</div>
+                                <div class="ph">campaign illust 2</div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="campaign">
+                                <div class="label">금융 보호 서비스</div>
+                                <div class="title">내 정보는<br>내가 지켜요!</div>
+                                <div class="ph">campaign illust 3</div>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="campaign">
+                                <div class="label">대출 상품 비교</div>
+                                <div class="title">최저 금리<br>지금 신청하기!</div>
+                                <div class="ph">campaign illust 4</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+
+            <div class="slider">
+                <div class="slider-track" id="slider-track">
+                    <div id="score" class="slide main">
+                        <div class="title">내 신용점수는?</div>
+                        <div class="body">
+                            <div class="score" id="scoreDisplay">850 <small>점 ›</small></div>
+                            <div class="ph">mascot</div>
+                        </div>
+                        <div class="foot">
+                            <span class="score-tab active" data-type="loan">대출</span>
+                            <span class="score-tab" data-type="card">카드</span>
+                            <span class="score-tab" data-type="delinquency">연체</span>
+                        </div>
+                    </div>
+                    <!-- 나머지 슬라이드는 credit.js에서 추가 -->
+                </div>
+                <div class="dots" id="dots"></div>
+            </div>
+        </section>
+
+        <!-- 보호 서비스 -->
+        <section class="protect-area" id="protect-area">
+            <!-- 보호 카드 2개는 credit.js에서 추가 -->
+            <div class="side-banners">
+                <div class="banner mint">
+                    <div><div class="label">개인정보 보호 서비스</div><div class="big">이용권 번호 등록하기</div></div>
+                    <div class="ph dark">icon</div>
+                </div>
+                <div class="banner violet">
+                    <div><div class="label">신용점수 영향없이</div><div class="big">대출한도 알아보기</div></div>
+                    <div class="ph dark">icon</div>
+                </div>
+            </div>
+        </section>
+
+        <h2>이런 서비스는 어떠세요?</h2>
+        <section class="services" id="services"></section>
+
+        <section class="insurance-area">
+            <div class="insurance">
+                <div>
+                    <div class="title">보험 보장분석</div>
+                    <div class="desc">누적된 내 보험료<br><b>1분만에 확인하기 ›</b></div>
+                </div>
+                <div class="ph round">illust</div>
+            </div>
+            <div class="banner">
+                <div><div class="label">이번 달</div><div class="big">혜택 좋은 카드는?</div></div>
+                <div class="ph">cards</div>
+            </div>
+        </section>
+
+        <h2>모르면 손해, 놓치면 안되는 <span class="point">혜택 정보</span></h2>
+        <section class="benefits" id="benefits"></section>
+
+        <h2>세상에 이런 혜택이</h2>
+        <section class="perks" id="perks"></section>
+
+        <section class="notice">
+            <a href="#">알려드려요 ›</a>
+            <span class="subject">신용변동알림 일시 중단 안내</span>
+            <span class="date">2026.09.23</span>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-left">
+                <nav>
+                    <a href="#">회사소개</a>
+                    <a href="#">개인정보처리방침</a>
+                    <a href="#">이용약관</a>
+                    <a href="#">신용평가체계공시</a>
+                    <a href="#">사이트맵</a>
+                </nav>
+                <div class="info">
+                    (주)신용숲 · 서울특별시 영등포구 여의대로 00 · 대표이사 홍길동<br>
+                    사업자등록번호 000-00-00000 · 통신판매업신고 2026-서울영등포-0000호<br>
+                    COPYRIGHT © SINYONGSOOP. ALL RIGHTS RESERVED.
+                </div>
+            </div>
+            <div class="footer-right">
+                <div class="cs"><span class="label">고객센터</span><span class="tel">1500-0000</span></div>
+                <div class="mail">help@sinyongsoop.kr</div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="js/credit.js"></script>
+</body>
+</html>
